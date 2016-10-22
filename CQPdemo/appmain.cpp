@@ -1,6 +1,6 @@
 
 /*
-* CoolQ Demo for VC++ 
+* CoolQ Demo for VC++
 * Api Version 9
 * Written by Coxxs & Thanks for the help of orzFly
 */
@@ -20,19 +20,24 @@ bool enabled = false;
 
 
 /*
-* ÀÇÈËÓÎÏ·µÄÏà¹Ø±äÁ¿²ÎÊı
+* Ò»Ò¹ÀÇÈËÓÎÏ·µÄÏà¹Ø±äÁ¿²ÎÊı
 */
 
-//start ±íÊ¾ÀÇÈË»·½ÚµÄ×´Ì¬»ú£¬0±íÊ¾Ã»ÓĞÓÎÏ·£¬1±íÊ¾¸Õ¿ªÊ¼£¬µÈ´ıÆäËûÈË±¨Ãû²Î¼Ó£¬2±íÊ¾ËùÓĞÈËÔ±¾ÍÎ»£¬¿ªÊ¼ÓÎÏ·£¬3±íÊ¾ÀÇÈËÉ±ÈË£¬4±íÊ¾Å®Î×¾ÈÈË£¬5±íÊ¾Ô¤ÑÔ¼ÒÑéÈË£¬6±íÊ¾ÊØÎÀÊØÈË¡£
+//start ±íÊ¾Ò»Ò¹ÀÇÈË»·½ÚµÄ×´Ì¬»ú£¬0±íÊ¾Ã»ÓĞÓÎÏ·£¬1±íÊ¾¸Õ¿ªÊ¼£¬µÈ´ıÆäËûÈË±¨Ãû²Î¼Ó£¬2±íÊ¾ËùÓĞÈËÔ±¾ÍÎ»£¬¿ªÊ¼ÓÎÏ·¡£3±íÊ¾¿ªÊ¼·ÖÅäÉí·İ£¨Ò²ÊÇ´ıÃü½×¶Î£©£¬4±íÊ¾µÈ´ıÔ¤ÑÔ¼ÒĞĞ¶¯£¬5±íÊ¾Ç¿µÁĞĞ¶¯£¬6±íÊ¾µ·µ°¹íĞĞ¶¯£¬7±íÊ¾¶¼ĞĞ¶¯Íê±Ï£¬µÈ´ıÍ¶Æ±£¬8±íÊ¾¹«²¼½á¹û
 int start = 0;
-int playernum = 0; //±¨Ãû²Î¼ÓÀÇÈËµÄÍæ¼ÒÊıÁ¿
-int dying = 0; //±íÊ¾±»ÀÇÈËÑ¡ÖĞµÄ¼´½«ËÀÍöµÄÍæ¼Ò
-int ansofwitch = 0;	//±íÊ¾Å®Î×Ñ¡Ôñ
-int ansofseer = 0;	//±íÊ¾Ô¤ÑÔ¼ÒÑ¡Ôñ
-int64_t playerqq[15];	//±¨Ãû²Î¼ÓÀÇÈËµÄÍæ¼ÒQQ
-char playername[15][50];	//±¨Ãû²Î¼ÓÀÇÈËÍæ¼ÒµÄÃû×Ö
+int playernum = 0; //±¨Ãû²Î¼ÓÒ»Ò¹ÀÇÈËµÄÍæ¼ÒÊıÁ¿
+
+const int PLAY_NUMBER = 12;
+
+int64_t playerqq[PLAY_NUMBER + 1];	//±¨Ãû²Î¼ÓÀÇÈËµÄÍæ¼ÒQQ
+char playername[PLAY_NUMBER + 1][50];	//±¨Ãû²Î¼ÓÀÇÈËÍæ¼ÒµÄÃû×Ö
 int64_t start_playerqq;		//·¢ÆğÀÇÈËÓÎÏ·ÕßQQ
 
+
+//Í¶Æ±Ïà¹Ø±äÁ¿
+int player_voted[PLAY_NUMBER + 1];	//±»Í¶Æ±µÄÍæ¼ÒÆ±Êı
+int player_vote[PLAY_NUMBER + 1];	//¸ÃÍæ¼ÒÊÇ·ñÍ¶¹ıÆ±
+int vote_player;
 
 int64_t uniqueQQgroup;
 int isGroup = 0;	//±íÊ¾ĞèÒªÏòÌÖÂÛ×é·¢ËÍĞÅÏ¢»¹ÊÇÈº·¢ËÍ£¬0±íÊ¾ÏòÌÖÂÛ×é·¢ËÍ£¬1±íÊ¾ÏòÈº·¢ËÍ
@@ -205,58 +210,61 @@ void analysis_nickname(unsigned char* in, char** out, bool group)	//group = 1±íÊ
 }
 
 
+//number of people from 3 to 12
+//meaning of number is "wolf", "lackeys", "watchman", "seer", "robber", "troublemaker", "insomniac", "villager", "hunter", "cobbler"
 
-//number of people from 8 to 15
-//meaning of number is "mode", "self", "werewolf", "witch", "seer", "hunter", "diot", "guard", "villager", "scapregoat"
-//mode = 0 express killall && 1 express killgod
-//self = 0 express witch could not save herself && 1 express just time 0 could save herself && 2 express could save herself
-const int character[8][10] =
+const int character[PLAY_NUMBER + 1][10] =
 {
-	{ 0, 2, 3, 1, 1, 0, 0, 0, 3, 0 },
-	{ 1, 2, 3, 1, 1, 1, 0, 0, 3, 0 },
-	{ 1, 1, 3, 1, 1, 1, 0, 0, 4, 0 },
-	{ 1, 0, 3, 1, 1, 0, 1, 0, 4, 1 },
-	{ 1, 1, 4, 1, 1, 1, 1, 0, 4, 0 },
-	{ 1, 0, 4, 1, 1, 1, 1, 0, 4, 1 },
-	{ 0, 1, 5, 1, 1, 1, 1, 0, 5, 0 },
-	{ 1, 1, 5, 1, 1, 1, 1, 1, 5, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 2, 0, 0, 1, 1, 1, 0, 1, 0, 0 },
+	{ 2, 0, 0, 1, 1, 1, 1, 1, 0, 0 },
+	{ 2, 0, 0, 1, 1, 1, 1, 1, 0, 1 },
+	{ 2, 0, 0, 1, 1, 1, 1, 2, 0, 1 },
+	{ 2, 1, 0, 1, 1, 1, 1, 2, 0, 1 },
+	{ 2, 1, 0, 1, 1, 1, 1, 2, 1, 1 },
+	{ 2, 1, 2, 1, 1, 1, 1, 1, 1, 1 },
+	{ 2, 1, 2, 1, 1, 1, 1, 2, 1, 1 },
+	{ 2, 1, 2, 1, 1, 1, 1, 3, 1, 1 },
+	{ 2, 1, 2, 1, 1, 1, 1, 4, 1, 1 },
 };
 
 //use number to express character
-//0 deadpeople
 //1 werewolf
-//2 witch
-//3 seer
-//4 hunter
-//5 diot
-//6 guard
-//7 villager
-//8 scapregoat
-int player[15] = { 0 };
+//2 lackeys
+//3 watchman
+//4 seer
+//5 robber
+//6 troublemaker
+//7 insomniac
+//8 villager
+//9 hunter
+//10 cobbler
+int player[PLAY_NUMBER + 1] = { 0 };
+int bottom[4] = { 0 };
 
-char *inf[8] = { "ÀÇÈË", "Å®Î×", "Ô¤ÑÔ¼Ò", "ÁÔÈË", "°×³Õ", "ÊØÎÀ", "´åÃñ", "Ìæ×ïÑò" };
-
-int mode;
-int self;
-int day = 1;
+char *inf[11] = { "", "ÀÇÈË", "×¦ÑÀ", "ÊØÒ¹ÈË", "Ô¤ÑÔ¼Ò", "Ç¿µÁ", "µ·µ°¹í", "Ê§ÃßÕß", "´åÃñ", "ÁÔÈË", "Æ¤½³" };
 
 
 
 void init()
 {
 	playernum = 0;
-	dying = 0;
-	day = 1;
-	ansofwitch = 0;
-	ansofseer = 0;
-	start_playerqq = 0;
-	for (int i = 0; i < 15; i++)
+	vote_player = 0;
+	for (int i = 0; i < PLAY_NUMBER + 1; i++)
+	{
+		player[i] = 0;
+		playerqq[i] = 0;
+		player_vote[i] = 0;
+		player_voted[i] = 0;
+	}
+	for (int i = 0; i < 4; i++)
 	{
 		player[i] = 0;
 		playerqq[i] = 0;
 	}
 	
-
 }
 
 void sendmessage(int ac, int64_t from, char* msg)
@@ -271,88 +279,91 @@ void sendmessage(int ac, int64_t from, char* msg)
 
 void welcome_word(int64_t fromGroup)
 {
-		sendmessage(ac, fromGroup, "»¶Ó­¿ªÆôÀÇÈËÓÎÏ·£¬ÎÒÊÇÕâ´ÎÓÎÏ·µÄÉÏµÛ£¬Ğ¡Ğ¡ÃÈÉñ£¬Çë¶àÖ¸½Ì¡££¨¸ĞĞ»ÎÒµÄ°Ö°ÖFrankShawÈÃÎÒµ±ÉÏµÛ£©\nÇëÊäÈë¡°#¼ÓÈëÀÇÈË¡±,À´²Î¼ÓÕâ´ÎÀÇÈËÓÎÏ·");
-	
+		sendmessage(ac, fromGroup, "»¶Ó­¿ªÆôÀÇÈËÓÎÏ·£¬ÎÒÊÇÕâ´ÎÓÎÏ·µÄÉÏµÛ£¬Ğ¡Ğ¡ÃÈÉñ£¬Çë¶àÖ¸½Ì¡££¨¸ĞĞ»ÎÒµÄ°Ö°ÖFrankShawÈÃÎÒµ±ÉÏµÛ£©\nÇëÊäÈë¡°#¼ÓÈëÒ»Ò¹ÀÇÈË¡±,À´²Î¼ÓÕâ´ÎÀÇÈËÓÎÏ·");
 }
 
 
 
 int initgame(int number, int64_t fromGroup)
 {
-	mode = character[number - 8][0];
-	self = character[number - 8][1];
+	int wolf = character[number][0];
+	int lackeys = character[number][1];
+	int watchman = character[number][2];
+	int seer = character[number][3];
+	int robber = character[number][4];
+	int troublemaker = character[number][5];
+	int insomniac = character[number][6];
+	int villager = character[number][7];
+	int hunter = character[number][8];
+	int cobbler = character[number][9];
 
-	int wolf = character[number - 8][2];
-	int witch = character[number - 8][3];
-	int seer = character[number - 8][4];
-	int hunter = character[number - 8][5];
-	int diot = character[number - 8][6];
-	int guard = character[number - 8][7];
-	int villager = character[number - 8][8];
-	int scapegoat = character[number - 8][9];
 
 	char *msg;
-	msg = (char *)malloc(sizeof(char)* 300);
-	memset(msg, '\0', 300);
+	msg = (char *)malloc(sizeof(char)* 400);
+	memset(msg, '\0', 400);
 
 	char buf[30];
 
 	strcpy(msg, "ÓÎÏ·¿ªÊ¼£¡\n");
 
-	sprintf(buf, "ÓÎÏ·Ò»¹²ÓĞ%d¸öÈË", number);
+	sprintf(buf, "±¾ÂÖÓÎÏ·Ò»¹²ÓĞ%d¸öÈË", number);
 	strcat(msg, buf);
 
 	strcat(msg, "½ÇÉ«·ÖÅäÈçÏÂ£º\n");
 
-	sprintf(buf, "ÀÇÈËÒ»¹²ÓĞ%d¸ö\n", wolf);
+	sprintf(buf, "%dÃûÀÇÈË\n", wolf);
 	strcat(msg, buf);
 
-	sprintf(buf, "%dÃûÅ®Î×\n", witch);
-	strcat(msg, buf);
+	if (lackeys)
+	{
+		sprintf(buf, "%dÃû×¦ÑÀ\n", lackeys);
+		strcat(msg, buf);
+	}
+
+
+	if (watchman)
+	{
+		sprintf(buf, "%dÃûÊØÒ¹ÈË\n", watchman);
+		strcat(msg, buf);
+	}
+
 
 	sprintf(buf, "%dÃûÔ¤ÑÔ¼Ò\n", seer);
 	strcat(msg, buf);
+
+	sprintf(buf, "%dÃûÇ¿µÁ\n", robber);
+	strcat(msg, buf);
+
+	sprintf(buf, "%dÃûµ·µ°¹í\n", troublemaker);
+	strcat(msg, buf);
+
+	if (insomniac)
+	{
+		sprintf(buf, "%dÃûÊ§ÃßÕß\n", insomniac);
+		strcat(msg, buf);
+	}
+
+	sprintf(buf, "%dÃû´åÃñ\n", villager);
+	strcat(msg, buf);
+
+	if (cobbler)
+	{
+		sprintf(buf, "%dÃûÆ¤½³\n", cobbler);
+		strcat(msg, buf);
+	}
 
 	if (hunter)
 	{
 		sprintf(buf, "%dÃûÁÔÈË\n", hunter);
 		strcat(msg, buf);
 	}
-	if (diot)
-	{
-		sprintf(buf, "%dÃû°×³Õ\n", diot);
-		strcat(msg, buf);
-	}
-	if (guard)
-	{
-		sprintf(buf, "%dÃûÊØÎÀ\n", guard);
-		strcat(msg, buf);
-	}
-	if (scapegoat)
-	{
-		sprintf(buf, "%dÃûÌæ×ïÑò£¨×¢Òâ£¬Ìæ×ïÑòÎª·ÇÉñ·ÇÃñµÄºÃÈË£©\n", scapegoat);
-		strcat(msg, buf);
-	}
-
-
-	sprintf(buf, "%dÃûÆÕÍ¨´åÃñ\n", villager);
-	strcat(msg, buf);
-
-	if (mode)
-		strcat(msg, "±¾¾ÖÓÎÏ·Ä£Ê½ÎªÍÀ±ß¾Ö£¬Ö»ÒªÉ±µôËùÓĞÉñÖ°»òÕßËùÓĞÆ½Ãñ£¬ÀÇÈË¼´ÎªÊ¤Àû¡£\n");
-	else
-		strcat(msg, "±¾¾ÖÓÎÏ·Ä£Ê½ÎªÍÀ³Ç¾Ö£¬ÀÇÈË±ØĞëÉ±ËÀËùÓĞºÃÈË·½ÕóÓª·½¿ÉÊ¤Àû¡£\n");
-	if (self == 0)
-		strcat(msg, "±¾¾ÖÓÎÏ·£¬Å®Î×²»¿É×Ô¾È¡£\n");
-	else if (self == 1)
-		strcat(msg, "±¾¾ÖÓÎÏ·£¬Å®Î×Ö»ÓĞµÚÒ»ÌìÍíÉÏ¿ÉÒÔ×Ô¾È¡£\n");
-	else if (self == 2)
-		strcat(msg, "±¾¾ÖÓÎÏ·£¬Å®Î×¿ÉÒÔ×Ô¾È¡£\n");
 
 	sendmessage(ac, fromGroup, msg);
+	
 
-	free(msg);
 	free(buf);
+	free(msg);
+
 	return 0;
 }
 
@@ -361,45 +372,66 @@ int initgame(int number, int64_t fromGroup)
 void deal_character(int num)
 {
 	//ÕâÀïÊ¹ÓÃ·´Ïò¸³Öµ£¬Ò²¾ÍÊ×ÏÈ¸ù¾İ½ÇÉ«ÊıÁ¿£¬Éú³ÉÒ»¸ö´øÓĞ½ÇÉ«ÊıÁ¿ºÍĞÅÏ¢µÄĞòÁĞ£¬ÔÙ½«ÈËµÄĞòÁĞ°´Ë³Ğò·ÅÖÃÔÚĞòÁĞµ±ÖĞ
-	int pre_character[15] = { 0 };
+	int pre_character[PLAY_NUMBER + 1] = { 0 };
 	int i;
-	int pos = 0;
-	//1 werewolf
-	for (i = 0; i < character[num - 8][2]; i++)
-		pre_character[pos++] = 1;
-	//2 witch
-	for (i = 0; i < character[num - 8][3]; i++)
-		pre_character[pos++] = 2;
-	//3 seer
-	for (i = 0; i < character[num - 8][4]; i++)
-		pre_character[pos++] = 3;
-	//4 hunter
-	for (i = 0; i < character[num - 8][5]; i++)
-		pre_character[pos++] = 4;
-	//5 diot
-	for (i = 0; i < character[num - 8][6]; i++)
-		pre_character[pos++] = 5;
-	//6 guard
-	for (i = 0; i < character[num - 8][7]; i++)
-		pre_character[pos++] = 6;
-	//7 villager
-	for (i = 0; i < character[num - 8][8]; i++)
-		pre_character[pos++] = 7;
-	//8 scapregoat
-	for (i = 0; i < character[num - 8][9]; i++)
-		pre_character[pos++] = 8;
+	int pos = 1;
 
-	pos = 0;
-	for (i = 0; i < num; i++)
+
+	//1 werewolf
+	for (i = 1; i <= character[num][0]; i++)
+		pre_character[pos++] = 1;
+	//2 lackeys
+	for (i = 1; i <= character[num][1]; i++)
+		pre_character[pos++] = 2;
+	//3 watchman
+	for (i = 1; i <= character[num][2]; i++)
+		pre_character[pos++] = 3;
+	//4 seer
+	for (i = 1; i <= character[num][3]; i++)
+		pre_character[pos++] = 4;
+	//5 robber
+	for (i = 1; i <= character[num][4]; i++)
+		pre_character[pos++] = 5;
+	//6 troublemaker
+	for (i = 1; i <= character[num][5]; i++)
+		pre_character[pos++] = 6;
+	//7 insomniac
+	for (i = 1; i <= character[num][6]; i++)
+		pre_character[pos++] = 7;
+	//8 villager
+	for (i = 1; i <= character[num][7]; i++)
+		pre_character[pos++] = 8;
+	//9 hunter
+	for (i = 1; i <= character[num][8]; i++)
+		pre_character[pos++] = 9;
+	//10 cobbler
+	for (i = 1; i <= character[num][8]; i++)
+		pre_character[pos++] = 10;
+
+
+	pos = 1;	//Ê×ÏÈ¶¨Î»1
+	for (i = 1; i <= num; i++)
 	{
-		int count = rand() % num + 1;
-		while (count)
+		int count = rand() % (num + 3) + 1;	//Ëæ»úÒ»¸öÊı×Ö£¬±íÊ¾´Óµ±Ç°Î»ÖÃÍùºóÍÆ¶¯Õâ¸öÊı×ÖÎ»£¬ÏÂÒ»¸ö·ÖÅä½ÇÉ«
+		while (count)	//ÍùºóÍÆ¶¯ÎŞ½ÇÉ«µÄÎ»ÖÃÎ»Êı
 		{
-			pos = (pos + 1) % num;
-			if (!player[pos])
+			pos++;
+			if (pos > num + 3)
+				pos = 1;
+			if (!!pre_character[pos])
 				count--;
 		}
-		player[pos] = pre_character[i];
+		player[i] = pre_character[pos];
+		pre_character[pos] = 0;
+	}
+
+	pos = 1;
+	for (i = 1; i <= num + 3; i++)
+	{
+		if (pre_character[i] != 0)
+		{
+			bottom[pos++] = pre_character[i];
+		}
 	}
 
 
@@ -410,149 +442,22 @@ void deal_character(int num)
 
 void print_player(int64_t fromGroup, int num)
 {
-	
 	sendmessage(ac, fromGroup, "ÕıÔÚ·ÖÅä½ÇÉ«£¬ÇëµÈ´ı...\n");
 
-	for (int i = 0; i < playernum; i++)
+	for (int i = 1; i <= playernum; i++)
 	{
 		char msg[80];
-		sprintf(msg, "ÄãÊÇ%dºÅÍæ¼Ò£¬ÄãµÄÉí·İÊÇ%s", i+1, inf[player[i] - 1]);
+		sprintf(msg, "ÄãÊÇ%dºÅÍæ¼Ò£¬ÄãµÄÉí·İÊÇ%s", i, inf[player[i]]);
 		CQ_sendPrivateMsg(ac, playerqq[i], msg);
+		
 		Sleep(1000);
 	}
-		
+
 	sendmessage(ac, fromGroup, "½ÇÉ«·ÖÅäÍê±Ï£¬ÓÎÏ·¿ªÊ¼¡£\n×£ÍæµÄÓä¿ì£¡");
 
-
-}
-
-void wolftimetoselect()
-{
-
-	char boddy[120]="ÄãµÄÀÇÍ¬°éÊÇ£º\n";
-	for (int i = 0; i < playernum; i++)
-	{
-		if (player[i] == 1)
-		{
-			char cnum[3];
-			itoa(i + 1, cnum, 10);
-			strcat(boddy, cnum);
-			strcat(boddy, "ºÅÀÇÈË\n");
-		}
-		
-	}
-	strcat(boddy, "ÇëÀÇÈËÌÖÂÛºÃÖ®ºó£¬ÆäÖĞÈÎÒâÒ»Î»ÀÇÈË»Ø¸´Ò»¸öÊı×Ö£¬±íÊ¾½ñÍíÒªÉ±Íæ¼ÒµÄºÅÂë\n");
-
-	for (int i = 0; i < playernum; i++)
-	{
-		if (player[i] == 1)
-		{
-			char msg[50];
-			sprintf(msg, "Äã×÷Îª%dºÅÀÇÈË£¬", i+1);
-			CQ_sendPrivateMsg(ac, playerqq[i], msg);
-			Sleep(500);
-			CQ_sendPrivateMsg(ac, playerqq[i], boddy);
-		}
-		
-				
-	}
-	
 }
 
 
-void witchtoselect()
-{
-	int64_t fromqq;
-	for (int i = 0; i < playernum; i++)
-	if (player[i] == 2)	//±íÊ¾Õâ¸öÍæ¼ÒÊÇÅ®Î×
-	{
-		fromqq = playerqq[i];
-		break;
-	}
-	if (self == 0 && player[dying - 1] == 2)
-		CQ_sendPrivateMsg(ac, fromqq, "Å®Î×£¬½ñÍíÄã±»ÀÇÈËÉ±ËÀÁË£¬ÓÉÓÚ²»ÄÜ×Ô¾È£¬ÄãÖ»ÄÜÑ¡ÔñÊÇ·ñÊ¹ÓÃ¶¾Ò©¡£\nÈç¹ûÊ¹ÓÃ£¬ÇëÖ±½Ó»Ø¸´ĞèÒª¶¾É±µÄÍæ¼ÒµÄĞòºÅ£¬Èç¹û²»ÓÃ£¬Çë»Ø¸´0¡£\n");
-
-	else if (self == 1 && day > 1 && player[dying - 1] == 2)
-		CQ_sendPrivateMsg(ac, fromqq, "Å®Î×£¬½ñÍíÄã±»ÀÇÈËÉ±ËÀÁË£¬ÓÉÓÚÒÑ¾­²»ÊÇµÚÒ»ÌìÍíÉÏ£¬Äã²»ÄÜ×Ô¾È£¬ÄãÖ»ÄÜÑ¡ÔñÊÇ·ñÊ¹ÓÃ¶¾Ò©¡£\nÈç¹ûÊ¹ÓÃ£¬ÇëÖ±½Ó»Ø¸´ĞèÒª¶¾É±µÄÍæ¼ÒµÄĞòºÅ£¬Èç¹û²»ÓÃ£¬Çë»Ø¸´0¡£\n");
-
-	else
-	{
-		char msg[120] = "Å®Î×£¬½ñÍíËÀµÄÈËÊÇ";
-		char cnum[3];
-		itoa(dying, cnum, 10);
-		strcat(msg, cnum);
-		strcat(msg, "ºÅ£¬Èç¹ûÄã¾ÈÕâÎ»Íæ¼Ò£¬Çë»Ø¸´#£»\nÈç¹û²»¾È»Ø¸´0£»\nÈç¹û²»¾ÈÈË£¬²¢ÇÒÒª¶¾ÈË£¬ÇëÖ±½Ó»Ø¸´Íæ¼ÒĞòºÅ\n");
-		CQ_sendPrivateMsg(ac, fromqq, msg);
-	}
-
-}
-
-
-void dealwithdeadpeople(int ans, int dead)
-{
-	if (ans == -1)
-		dying = 0;
-	else if (ans == 0)
-		player[dying] = player[dying] * -1;	//ËÀÈËÉí·İÎª¸ºÊı£¬²¢ÇÒ¾ø¶ÔÖµ¾ÍÊÇÔ­Éí·İ
-	else
-	{
-		player[dying] = player[dying] * -1;
-		player[ans] = player[ans] * -1;
-	}
-
-}
-
-
-void seertoselect()
-{
-	int64_t fromqq;
-	for (int i = 0; i < playernum; i++)
-	if (player[i] == 3)	//±íÊ¾Õâ¸öÍæ¼ÒÊÇÔ¤ÑÔ¼Ò
-	{
-		fromqq = playerqq[i];
-		break;
-	}
-
-	CQ_sendPrivateMsg(ac, fromqq, "ÄãÊÇÔ¤ÑÔ¼Ò£¬Çë»Ø¸´Ò»¸öÍæ¼Ò±àºÅ£¬ÑéÃ÷Éí·İ");
-}
-
-
-void nightover()
-{
-	sendmessage(ac, uniqueQQgroup, "ºÃÀ²£¬×òÍíÉÏËùÓĞÉí·İ¶¼ÒÑ¾­ĞĞ¶¯Íê±Ï£¬ÏÖÔÚ¿ªÊ¼¾ºÑ¡¾¯³¤£¬Èç¹ûÃ»ÓĞ¾¯³¤£¬Çë»Ø¸´#ÌìÁÁÁË£¬²é¿´×òÍíÇé¿ö");
-}
-
-
-void sunrise(int64_t fromGroup)
-{
-	if (ansofwitch == -1)
-		sendmessage(ac, fromGroup, "×òÌìÍíÉÏÊÇÆ½°²Ò¹à¸~");
-	else if (ansofwitch == 0)
-	{
-		char msg[60] = "×òÌìÍíÉÏËÀÕßÊÇ";
-		char cnum[3];
-		itoa(dying, cnum, 10);
-		strcat(msg, cnum);
-		strcat(msg, "ºÅ£¬ºÃ¿ÉÁ¯à¸");
-		sendmessage(ac, fromGroup, msg);
-
-	}
-	else
-	{
-		char msg[60] = "×òÌìÍíÉÏÓĞÁ½Î»Íæ¼ÒËÀÍö£¬·Ö±ğÊÇ";
-		char cnum[3];
-		itoa(dying, cnum, 10);
-		strcat(msg, cnum);
-		strcat(msg, "ºÅºÍ");
-		itoa(ansofwitch, cnum, 10);
-		strcat(msg, cnum);
-		strcat(msg, "ºÅ£¬ºÃ¿ÉÅÂµÄÒ¹Ííà¸");
-		sendmessage(ac, fromGroup, msg);
-	}
-		
-
-	day++;
-}
 
 
 
@@ -562,12 +467,339 @@ void wolf_startgame(int64_t fromGroup, int64_t fromQQ)
 	srand((unsigned int)time(NULL));
 	init();
 	welcome_word(fromGroup);
-		
+
+}
+
+void wolf_time(int64_t fromGroup)
+{
+	//¼ìË÷ÀÇÈËÊı
+	int wolf_count = 0;	//¼È×÷ÎªÀÇÈËÊıÍ³¼Æ£¬Ò²×÷ÎªÀÇÈËÎ»ÖÃµÄÏÂ±ê
+	int wolf_player[2];
+	for (int i = 1; i <= playernum; i++)
+	{
+		if (player[i] == 1)	//Èç¹ûÊÇÀÇÈË
+		{
+			wolf_player[wolf_count++] = playerqq[i];
+		}
+			
+	}
+	if (wolf_count == 0)
+	{
+		return;
+	}
+	else if (wolf_count == 1)
+	{
+		int b = rand() % 3 + 1;
+		char t[100];
+		sprintf(t, "Õâ¾ÖÓÎÏ·£¬ÄãÊÇÀÇÈË£¬Õâ¾ÖÓÎÏ·Ö»ÓĞÄãÒ»Î»ÀÇÈË£¬ÒªĞ¡ĞÄµÄÒş²ØºÃ×Ô¼º\nÈıÕÅµ×ÅÆÆäÖĞÒ»ÕÅÎª£º%s", inf[bottom[b]]);
+		CQ_sendPrivateMsg(ac, playerqq[0],t);
+
+	}
+	else if (wolf_count == 2)
+	{
+		char boddy[120] = "ÄãµÄÀÇÍ¬°éÊÇ£º\n";
+		for (int i = 1; i <= playernum; i++)
+		{
+			if (player[i] == 1)
+			{
+				char cnum[30];
+				sprintf(cnum, "%dºÅÀÇÈË%s\n", i, playername[i]);
+				strcat(boddy, cnum);
+			}
+
+		}
+
+		for (int i = 1; i <= playernum; i++)
+		{
+			if (player[i] == 1)
+			{
+				char msg[50];
+				sprintf(msg, "Äã×÷Îª%dºÅÀÇÈË¡£", i);
+				CQ_sendPrivateMsg(ac, playerqq[i], msg);
+				Sleep(500);
+				CQ_sendPrivateMsg(ac, playerqq[i], boddy);
+			}
+		}
+	}
+	else
+	{
+		sendmessage(ac, fromGroup, "ÓÎÏ·³öÏÖÎ´Öª´íÎó£¡\n");
+	}
+}
+
+
+void lackeys_time(int64_t fromGroup)
+{
+	int lackeys;
+	for (lackeys = 1; lackeys <= playernum; lackeys++)
+	{
+		if (player[lackeys] == 2)	//Èç¹ûÊÇ×¦ÑÀ
+			break;
+	}
+
+	if (lackeys <= playernum)	//±íÊ¾³¡ÉÏÓĞ×¦ÑÀ
+	{
+		//¼ìË÷ÀÇÈËÊı
+		int wolf_count = 0;	//¼È×÷ÎªÀÇÈËÊıÍ³¼Æ£¬Ò²×÷ÎªÀÇÈËÎ»ÖÃµÄÏÂ±ê
+		int wolf_player[2];
+
+		char boddy[200] = "ÄãÊÇ×¦ÑÀ£¬ÄãĞèÒª±£»¤µÄÀÇÊÇ£¨Èç¹ûÃ»ÓĞ£¬±íÊ¾³¡ÉÏÃ»ÓĞÀÇ£©£º\n";
+
+		for (int i = 1; i <= playernum; i++)
+		{
+			if (player[i] == 1)	//Èç¹ûÊÇÀÇÈË
+			{
+				wolf_player[wolf_count++] = playerqq[i];
+				char buf[50];
+				sprintf(buf, "%dºÅÍæ¼Ò%s\n", i, playername[i]);
+				strcat(boddy, buf);
+			}
+
+		}
+
+		CQ_sendPrivateMsg(ac, playerqq[lackeys], boddy);
+
+	}
+
+
+}
+
+void watchman_time(int64_t fromGroup)
+{
+	//¼ìË÷ÊØÒ¹ÈËÊı
+	int watchman_count = 0;	//¼È×÷ÎªÊØÒ¹ÈËÊıÍ³¼Æ£¬Ò²×÷ÎªÊØÒ¹ÈËÎ»ÖÃµÄÏÂ±ê
+	int watchman_player[2] = { 0, 0 };
+
+	char boddy[120] = "ÄãÊÇÊØÒ¹ÈË£¬ÄãµÄÊØÒ¹ÈËÍ¬°éÊÇ£º\n";
+
+	for (int i = 1; i <= playernum; i++)
+	{
+		if (player[i] == 3)	//Èç¹ûÊÇÊØÒ¹ÈË
+		{
+			watchman_player[watchman_count++] = playerqq[i];
+			char cnum[30];
+			sprintf(cnum, "%dºÅÊØÒ¹ÈË%s\n", i, playername[i]);
+			strcat(boddy, cnum);
+		}
+
+	}
+	if (watchman_count > 2)
+	{
+		sendmessage(ac, fromGroup, "ÓÎÏ·³öÏÖÎ´Öª´íÎó£¡\n");
+	}
+	else
+	{
+		for (int i = 0; i < watchman_count; i++)
+		{
+			CQ_sendPrivateMsg(ac, watchman_player[i], boddy);
+		}
+	}
+
+}
+
+void seer_time(int64_t fromGroup)
+{
+
+	bool have_seer = false;
+
+	for (int i = 1; i <= playernum; i++)
+	{
+		if (player[i] == 4)	//Èç¹ûÊÇÔ¤ÑÔ¼Ò
+		{
+			have_seer = true;
+			char boddy[200] = "ÄãÊÇÔ¤ÑÔ¼Ò£¬Äã¿ÉÒÔ·¢¶¯Á½¸ö¼¼ÄÜÖ®Ò»£¬1¡¢²é¿´Ò»¸öÍæ¼ÒµÄÉí·İ£¬2¡¢²é¿´ÈıÕÅµ×ÅÆµ±ÖĞµÄÈÎÒâÁ½ÕÅ£¬Çë»Ø¸´ĞòºÅ±íÊ¾²é¿´Ò»¸öÍæ¼ÒÉí·İ£¬»Ø¸´0±íÊ¾²é¿´µ×ÅÆ¡£\n";
+			start = 4;
+			CQ_sendPrivateMsg(ac, playerqq[i], boddy);
+		}
+
+	}
+
+	if (!have_seer)
+	{
+		robber_time();
+	}
+
+}
+
+
+void robber_time()
+{
+
+	bool have_robber = false;
+
+	for (int i = 1; i <= playernum; i++)
+	{
+		if (player[i] == 5)	//Èç¹ûÊÇÇ¿µÁ
+		{
+			have_robber = true;
+			char boddy[120] = "ÄãÊÇÇ¿µÁ£¬Çë»Ø¸´Ò»¸öÍæ¼ÒµÄĞòºÅ£¬²é¿´Éí·İ²¢½»»»£¬Èç¹û²»Ïë½»»»Çë»Ø¸´0¡£\n";
+			start = 5;
+			CQ_sendPrivateMsg(ac, playerqq[i], boddy);
+		}
+
+	}
+
+	if (!have_robber)
+		troublemaker_time();
+
+}
+
+void troublemaker_time()
+{
+	bool have_troublemaker = false;
+
+	for (int i = 1; i <= playernum; i++)
+	{
+		if (player[i] == 6)	//Èç¹ûÊÇµ·µ°¹í
+		{
+			have_troublemaker = true;
+			char boddy[120] = "ÄãÊÇµ·µ°¹í£¬Çë»Ø¸´Á½¸öÍæ¼ÒµÄĞòºÅ£¬ÓÃ¿Õ¸ñ·Ö¸ô£¬ÀıÈç£¨3 5£©£¬½«ËûÃÇµÄÉí·İ»¥»»²é¿´Éí·İ²¢½»»»¡£\n";
+			start = 6;
+			CQ_sendPrivateMsg(ac, playerqq[i], boddy);
+		}
+
+	}
+
+	if (!have_troublemaker)
+		insomniac_time();
+
+}
+
+
+void insomniac_time()
+{
+
+	bool have_insomniac = false;
+
+	for (int i = 1; i <= playernum; i++)
+	{
+		if (player[i] == 7)	//Èç¹ûÊÇÊ§ÃßÕß
+		{
+			have_insomniac = true;
+			char boddy[120];
+			sprintf(boddy, "ÄãÊÇÊ§ÃßÕß£¬Äã×îºóµÄÉí·İÊÇ£º%s", inf[player[i]]);
+			start = 7;
+			CQ_sendPrivateMsg(ac, playerqq[i], boddy);
+		}
+
+	}
+
+	if (!have_insomniac)
+		sunrise();
+}
+
+
+void character_move_stage(int64_t fromGroup)
+{
+	if (character[playernum][0])
+		wolf_time(fromGroup);
+	if (character[playernum][1])
+		lackeys_time(fromGroup);
+	if (character[playernum][2])
+		watchman_time(fromGroup);
+	if (character[playernum][3])
+		seer_time(fromGroup);
+	
+}
+
+
+void sunrise()
+{
+	sendmessage(ac, uniqueQQgroup, "ºÃÀ²£¬×òÍíÉÏËùÓĞÉí·İ¶¼ÒÑ¾­ĞĞ¶¯Íê±Ï£¬ÏÖÔÚ¿ªÊ¼½øÈëÎŞÏŞÖÆÌÖÂÛ£¬Èç¹ûÏëÍ¶Æ±£¬ÇëË½ÁÄ»Ø¸´ĞòºÅ¼´¿É£¬¼Ç×¡£¬Ò»µ©Í¶Æ±²»¿É¸ü¸Ä¡£");
 }
 
 
 
-/* 
+void show_all()
+{
+	char mm[1000] = "±¾¾ÖÓÎÏ·½áÊø~ËùÓĞÈËÉí·İÈçÏÂ£º\n";
+	for (int i = 1; i < playernum; i++)
+	{
+		char buf[50];
+		sprintf(buf, "%dºÅÍæ¼ÒÉí·İÊÇ%s\n", i, inf[player[i]]);
+		strcat(mm, buf);
+	}
+	strcat(mm, "±¾´ÎÓÎÏ·½áÊø£¬¸ĞĞ»´ó¼Ò~\n");
+	sendmessage(ac, uniqueQQgroup, mm);
+	start = 0;
+}
+
+void all_end()
+{
+	sendmessage(ac, uniqueQQgroup, "ºÃÀ²£¬ËùÓĞÍæ¼ÒÒÑ¾­Í¶Æ±Íê±Ï£¬ÏÖÔÚ¿ªÊ¼Í³¼ÆÆ±Êı...");
+	Sleep(500);
+
+
+	int max_ticket = 0;
+
+	char buff[500] = "";
+	for (int i = 1; i <= playernum; i++)
+	{
+		if (player_voted[i] > max_ticket)
+		{
+			max_ticket = player_voted[i];
+		}
+		char buf[50];
+		sprintf(buf, "%dºÅÍæ¼ÒµÃµ½µÄÆ±ÊıÎª%d\n", i, player_voted[i]);
+		strcat(buff, buf);
+	}
+
+	if (max_ticket == 1)	//¶¼Í¶ÁË×Ô¼º£¬Æ½Æ±£¬Ã»ÓĞÈËËÀÍö
+	{
+		bool victor = true;
+		for (int i = 1; i <= playernum; i++)
+		{
+			if (player[i] == 1)
+			{
+				victor = false;
+				break;
+			}
+		}
+		if (victor)
+		{
+			sendmessage(ac, uniqueQQgroup, "³¡ÉÏÃ»ÓĞÀÇÈË£¬Õâ¾ÖÓÎÏ·´åÃñÊ¤Àû£¡");
+		}
+		else
+		{
+			sendmessage(ac, uniqueQQgroup, "³¡ÉÏ»¹ÓĞÒş²ØµÄÀÇÈËà¸£¬Õâ¾ÖÓÎÏ·ÀÇÈËÊ¤Àû£¡");
+		}
+		
+	}
+	else
+	{
+		char dead_player[500] = "×òÍíÆ±Êı×î¸ßµÄ¼¸ÃûÍæ¼ÒÊÇ£º\n";
+		char dead_player_inf[100] = "ËûÃÇµÄÉí·İÊÇ£º\n";
+		for (int i = 1; i < playernum; i++)
+		{
+			if (player_voted[i] == max_ticket)
+			{
+				char buf[30];
+				sprintf(buf, "%dºÅÍæ¼Ò%s\n", i, playername[i]);
+				strcat(dead_player, buf);
+
+				memset(buf, '\0', 30);
+				sprintf(buf, "%dºÅÍæ¼Ò%s\n", i, inf[player[i]]);
+				strcat(dead_player_inf, buf);
+
+			}
+			
+		}
+
+		strcat(dead_player, dead_player_inf);
+		sendmessage(ac, uniqueQQgroup, dead_player);
+		
+
+	}
+
+
+	show_all();
+	
+}
+
+
+
+
+/*
 * ·µ»ØÓ¦ÓÃµÄApiVer¡¢Appid£¬´ò°üºó½«²»»áµ÷ÓÃ
 */
 CQEVENT(const char*, AppInfo, 0)() {
@@ -575,7 +807,7 @@ CQEVENT(const char*, AppInfo, 0)() {
 }
 
 
-/* 
+/*
 * ½ÓÊÕÓ¦ÓÃAuthCode£¬¿áQ¶ÁÈ¡Ó¦ÓÃĞÅÏ¢ºó£¬Èç¹û½ÓÊÜ¸ÃÓ¦ÓÃ£¬½«»áµ÷ÓÃÕâ¸öº¯Êı²¢´«µİAuthCode¡£
 * ²»ÒªÔÚ±¾º¯Êı´¦ÀíÆäËûÈÎºÎ´úÂë£¬ÒÔÃâ·¢ÉúÒì³£Çé¿ö¡£ÈçĞèÖ´ĞĞ³õÊ¼»¯´úÂëÇëÔÚStartupÊÂ¼şÖĞÖ´ĞĞ£¨Type=1001£©¡£
 */
@@ -639,138 +871,146 @@ CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t sendTime, int64
 	//Èç¹ûÒª»Ø¸´ÏûÏ¢£¬Çëµ÷ÓÃ¿áQ·½·¨·¢ËÍ£¬²¢ÇÒÕâÀï return EVENT_BLOCK - ½Ø¶Ï±¾ÌõÏûÏ¢£¬²»ÔÙ¼ÌĞø´¦Àí  ×¢Òâ£ºÓ¦ÓÃÓÅÏÈ¼¶ÉèÖÃÎª"×î¸ß"(10000)Ê±£¬²»µÃÊ¹ÓÃ±¾·µ»ØÖµ
 	//Èç¹û²»»Ø¸´ÏûÏ¢£¬½»ÓÉÖ®ºóµÄÓ¦ÓÃ/¹ıÂËÆ÷´¦Àí£¬ÕâÀï return EVENT_IGNORE - ºöÂÔ±¾ÌõÏûÏ¢
 
-	if (start == 3)
+	if (start == 4)	//Ô¤ÑÔ¼ÒĞĞ¶¯»ØºÏ
 	{
-		for (int i = 0; i < playernum; i++)
+		for (int i = 1; i <= playernum; i++)
 		{
-			if (playerqq[i] == fromQQ && player[i] == 1)	//±íÊ¾Õâ¸öÍæ¼ÒÊÇÀÇÈË
+			if (playerqq[i] == fromQQ && player[i] == 4)	//Õâ¸öÈËÊÇÔ¤ÑÔ¼Ò
 			{
-				dying = atoi(msg);
-				if (dying > 0 && dying <= playernum)
+				int ansofseer = atoi(msg);
+				if (ansofseer == 0)
 				{
-
-					char m[80];
-					strcpy(m, "ÄãÑ¡ÔñÁË");
-					strcat(m, msg);
-					strcat(m, "ºÅÍæ¼Ò£¬ÏÖÔÚÇë±ÕÑÛ");
-					CQ_sendPrivateMsg(ac, fromQQ, m);
-					start = 4;
-					witchtoselect();	//½øÈëÅ®Î×Ñ¡Ôñ»·½Ú
+					char b[200];
+					sprintf(b, "ÄãÑ¡ÔñÁË²é¿´µ×ÅÆ£¬ÆäÖĞÁ½ÕÅµ×ÅÆÎª %s ºÍ %s ¡£", inf[bottom[1]], inf[bottom[2]]);
+					CQ_sendPrivateMsg(ac, fromQQ, b);
+					start = 3;
+					robber_time();
 				}
-
+				else if (ansofseer > 0 && ansofseer <= playernum)
+				{
+					char b[200];
+					sprintf(b, "ÄãÑ¡ÔñÁË²é¿´Ò»¸öÍæ¼ÒµÄÉí·İ£¬%sËûµÄÉí·İÊÇ%s ¡£", playername[ansofseer], inf[player[ansofseer]]);
+					CQ_sendPrivateMsg(ac, fromQQ, b);
+					start = 3;
+					robber_time();
+				}
 				else
-					CQ_sendPrivateMsg(ac, fromQQ, "ÊäÈëÍæ¼ÒµÄ±àºÅÓĞÎó£¬ÇëÖØĞÂÊäÈë");
+					CQ_sendPrivateMsg(ac, fromQQ, "ÊäÈë´íÎó£¬ÇëÖØĞÂÊäÈë£¡");
+
 			}
 		}
-		
+	}
+
+	if (start == 5)	//Ç¿µÁĞĞ¶¯»ØºÏ
+	{
+		for (int i = 1; i <= playernum; i++)
+		{
+			if (playerqq[i] == fromQQ && player[i] == 5)	//Õâ¸öÈËÊÇÔ¤ÑÔ¼Ò
+			{
+				int ansofrobber = atoi(msg);
+				if (ansofrobber == 0)
+				{
+					CQ_sendPrivateMsg(ac, fromQQ, "ÄãÑ¡ÔñÁË²»»»ÅÆ");
+					start = 3;
+					troublemaker_time();
+				}
+				else if (ansofrobber > 0 && ansofrobber <= playernum)
+				{
+					char b[200];
+					sprintf(b, "ÄãÑ¡ÔñÁËÓë%sÍæ¼Ò½»»»Éí·İ£¬ËûµÄÉí·İÊÇ%s¡£", playername[ansofrobber], inf[player[ansofrobber]]);
+					CQ_sendPrivateMsg(ac, fromQQ, b);
+					start = 3;
+
+
+					//½»»»Ç¿µÁºÍ±»»»µÄÈË
+					int temp = player[ansofrobber];
+					player[ansofrobber] = player[i];
+					player[i] = temp;
+
+					troublemaker_time();
+				}
+				else
+					CQ_sendPrivateMsg(ac, fromQQ, "ÊäÈë´íÎó£¬ÇëÖØĞÂÊäÈë£¡");
+
+			}
+		}
 	}
 	
-	else if (start == 4)
+
+	if (start == 6)	//µ·µ°¹íĞĞ¶¯»ØºÏ
 	{
-		for (int i = 0; i < playernum; i++)
+		for (int i = 1; i <= playernum; i++)
 		{
-			if (playerqq[i] == fromQQ && player[i] == 2)	//±íÊ¾Õâ¸öÍæ¼ÒÊÇÅ®Î×
+			if (playerqq[i] == fromQQ && player[i] == 6)	//Õâ¸öÈËÊÇµ·µ°¹í
 			{
-				if (strcmp(msg, "#") == 0)
-					ansofwitch = -1;
-				else
-					ansofwitch = atoi(msg);
+				
+				char* b;
+				b = strchr((char *)msg, ' ');
+				b++;
+				char a[10];
+				strcpy(a, msg);
+				a[b - msg - 1] = '\0';
+				
+				int x = atoi(a);
+				int y = atoi(b);
 
-				//msgµÄ»Ø¸´ÊÇ×Ö·û£¬Ö±½ÓÓÃ×Ö·ûÀ´´¦Àí¡£Èç¹ûÄã¾ÈÕâÎ»Íæ¼Ò£¬Çë»Ø¸´#£¬Èç¹û²»¾È»Ø¸´0£¬Èç¹û²»¾ÈÈË£¬²¢ÇÒÒª¶¾ÈË£¬ÇëÖ±½Ó»Ø¸´Íæ¼ÒĞòºÅ"
-				if (ansofwitch >= -1 && ansofwitch <= playernum)
-				{
-					if (ansofwitch == 0)
-					{
-						CQ_sendPrivateMsg(ac, fromQQ, "Å®Î×£¬½ñÍíÄãÑ¡ÔñÁË²»¾ÈÈË£¬Ì«²ĞÈÌÁË");
-						
-					}
-					else if (ansofwitch > 0 && ansofwitch <= playernum)
-					{
-						char m[120];
-						strcpy(m, "Å®Î×ÄãÑ¡ÔñÁË²»¾ÈÈË£¬²¢ÇÒ¶¾É±");
-						strcat(m, msg);
-						strcat(m, "ºÅÍæ¼Ò£¬Ì«¿ÉÅÂÁË¡£ÏÖÔÚÇë±ÕÑÛ");
-						CQ_sendPrivateMsg(ac, fromQQ, m);
-						
-					}
+				//½»»»µ·µ°¹íÑ¡ÔñµÄÈË
+				int temp = player[x];
+				player[x] = player[y];
+				player[y] = temp;
 
-					else if (ansofwitch == -1)
-					{
-						CQ_sendPrivateMsg(ac, fromQQ, "Å®Î×£¬½ñÍíÄãÑ¡ÔñÁËÕü¾ÈÕâ¸ö¿ÉÁ¯ÈË¡£ÏÖÔÚÇë±ÕÑÛ");
-						
-					}
-					
-					start = 5;	//½øÈëÔ¤ÑÔ¼Ò»ØºÏ
-					seertoselect();	//½øÈëÔ¤ÑÔ¼ÒÑ¡Ôñ
-				}
-				else
-					CQ_sendPrivateMsg(ac, fromQQ, "Å®Î×ÄãÊäÈëµÄÑ¡ÔñÓĞÎó£¬ÇëÖØĞÂÊäÈë");
-			}
-		}
+				start = 7;
 
-	}
+				char tt[200];
+				sprintf(tt, "ÄãÑ¡ÔñÁË%dºÅÍæ¼Ò%sºÍ%dºÅÍæ¼Ò%s½»»»", x, playername[x], y, inf[player[y]]);
+				CQ_sendPrivateMsg(ac, fromQQ, tt);
 
+				insomniac_time();
 
-	else if (start == 5)	//Ô¤ÑÔ¼Ò»ØºÏ
-	{
-		for (int i = 0; i < playernum; i++)
-		{
-			if (playerqq[i] == fromQQ && player[i] == 3)	//±íÊ¾Õâ¸öÍæ¼ÒÊÇÔ¤ÑÔ¼Ò
-			{
-				ansofseer = atoi(msg);
-				if (dying > 0 && dying <= playernum)
-				{
-
-					char m[80];
-					strcpy(m, "ÄãÑ¡ÔñÁË");
-					strcat(m, msg);
-					strcat(m, "ºÅÍæ¼Ò£¬ËûµÄÉí·İÊÇ...");
-					CQ_sendPrivateMsg(ac, fromQQ, m);
-					if (player[ansofseer - 1] > 1)
-					{
-						CQ_sendPrivateMsg(ac, fromQQ, "ºÃÈË");
-						start = 6;
-						dealwithdeadpeople(ansofwitch, dying);	//´¦ÀíËÀÈË
-						nightover();
-					}
-					else if (player[ansofseer - 1] == 1)
-					{
-						CQ_sendPrivateMsg(ac, fromQQ, "ÀÇÈË");
-						start = 6;
-						dealwithdeadpeople(ansofwitch, dying);	//´¦ÀíËÀÈË
-						nightover();
-					}
-					else
-						CQ_sendPrivateMsg(ac, fromQQ, "ËÀÈË£¬ÇëÖØĞÂÊäÈëÒ»¸ö»î×ÅµÄÍæ¼Ò");
-
-					
-				}
-
-				else
-					CQ_sendPrivateMsg(ac, fromQQ, "ÊäÈëÍæ¼ÒµÄ±àºÅÓĞÎó£¬ÇëÖØĞÂÊäÈë");
+				sunrise();
+				
 			}
 		}
 	}
 
-	else if (start == 6)	//ËÀÈË¿ÉÒÔ»Ø¸´#²é¿´Éí·İÀ´²é¿´ËùÓĞÈËµÄÉí·İ
+	if (start == 7)	//½ÓÊÜ¸÷Î»Íæ¼ÒµÄÍ¶Æ±
 	{
-		for (int i = 0; i < playernum; i++)
+		for (int i = 1; i <= playernum; i++)
 		{
-			if (playerqq[i] == fromQQ && player[i] < 0 && strcmp(msg, "#²é¿´Éí·İ") == 0)	//¼ì²éÕâ¸öÈËÊÇËÀÈË£¬²¢ÇÒÕâ¸öÈËÒªÇó²é¿´Éí·İ
+			if (playerqq[i] == fromQQ)	//Õâ¸öÈËÊÇÍæ¼Ò£¬²¢ÇÒÃ»ÓĞÍ¶¹ıÆ±
 			{
-				char buf[1500] = "ÏÖÔÚ¸øÄã¿´ËùÓĞÍæ¼ÒÉí·İ£º\n";
-				for (int j = 0; j < playernum; j++)
+				if (player_vote[i] == 0)
 				{
-					char buff[60];
-					sprintf(buff, "%dºÅÍæ¼Ò£º%s£¬Éí·İ£º%s\n", j + 1, playername[j], inf[abs(player[j]) - 1]);
-					strcat(buf, buff);
+					int v = atoi(msg);
+					player_voted[v]++;
+					player_vote[i] = 1;
+
+					char b[200];
+					sprintf(b, "ÄãÑ¡ÔñÁËÍ¶¸ø%dºÅÍæ¼Ò%s", v, playername[v]);
+					CQ_sendPrivateMsg(ac, fromQQ, b);
+
+					vote_player++;
+					memset(b, '\0', 200);
+					sprintf(b, "%sºÅÍæ¼Ò%sÒÑ¾­Í¶Æ±£¡»¹Ê£%dÎ»Íæ¼ÒÃ»ÓĞÍ¶Æ±", i, playername[i], playernum - vote_player);
+
+					sendmessage(ac, uniqueQQgroup, b);
+
+					if (vote_player == playernum)
+					{
+						start = 8;
+						all_end();
+					}
+
 				}
-				CQ_sendPrivateMsg(ac, fromQQ, buf);
+				else
+				{
+					CQ_sendPrivateMsg(ac, fromQQ, "ÄãÒÑ¾­Í¶¹ıÆ±ÁË£¡");
+				}
 			}
 		}
 	}
 
-	
+
 	return EVENT_BLOCK;
 }
 
@@ -780,7 +1020,7 @@ CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t sendTime, int64
 */
 CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t fromGroup, int64_t fromQQ, const char *fromAnonymous, const char *msg, int32_t font) {
 
-	if (strcmp(msg, "#¿ªÊ¼ÀÇÈË") == 0)
+	if (strcmp(msg, "#¿ªÊ¼Ò»Ò¹ÀÇÈË") == 0)
 	{
 		if (fromQQ == 452434701)
 		{
@@ -793,41 +1033,41 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 				start = 1;
 			}
 			else
-				sendmessage(ac, fromGroup, "ÀÇÈËÓÎÏ·ÒÑ¾­¿ªÊ¼£¡");
+				sendmessage(ac, fromGroup, "Ò»Ò¹ÀÇÈËÓÎÏ·ÒÑ¾­¿ªÊ¼£¡");
 
 		}
 		else
-			sendmessage(ac, fromGroup, "Äã²»ÊÇÎÒ°Ö°Ö£¬²»¸øÄã¿ªÀÇÈËÓÎÏ·");
+			sendmessage(ac, fromGroup, "Äã²»ÊÇÎÒ°Ö°Ö£¬²»¸øÄã¿ªÒ»Ò¹ÀÇÈËÓÎÏ·");
 
 	}
 
 
-	else if (strcmp(msg, "#½áÊøÀÇÈË") == 0)
+	else if (strcmp(msg, "#½áÊøÒ»Ò¹ÀÇÈË") == 0)
 	{
 		if (start != 0)
 		{
 			if (start_playerqq == fromQQ)
 			{
-				sendmessage(ac, fromGroup, "½áÊøÀÇÈËÓÎÏ·£¡");
+				sendmessage(ac, fromGroup, "½áÊøÒ»Ò¹ÀÇÈËÓÎÏ·£¡");
 				start = 0;
 			}
 			else
-				sendmessage(ac, fromGroup, "Äã²»ÊÇÀÇÈËÓÎÏ·µÄ·¢ÆğÕß£¬²»ÄÜ½áÊøÀÇÈËÓÎÏ·£¡");
+				sendmessage(ac, fromGroup, "Äã²»ÊÇÒ»Ò¹ÀÇÈËÓÎÏ·µÄ·¢ÆğÕß£¬²»ÄÜ½áÊøÒ»Ò¹ÀÇÈËÓÎÏ·£¡");
 		}
 		else
-			sendmessage(ac, fromGroup, "²¢Ã»ÓĞ¿ªÊ¼ÀÇÈËÓÎÏ·£¡");
+			sendmessage(ac, fromGroup, "²¢Ã»ÓĞ¿ªÊ¼Ò»Ò¹ÀÇÈËÓÎÏ·£¡");
 	}
 
 
 
-	else if (strcmp(msg, "#¼ÓÈëÀÇÈË") == 0)
+	else if (strcmp(msg, "#¼ÓÈëÒ»Ò¹ÀÇÈË") == 0)
 	{
 		if (start == 1)
 		{
 			int joined = 0;
-			int set = 0;
+			int set = 1;
 			int i;
-			for (i = 0; i < 15; i++)
+			for (i = 1; i <= PLAY_NUMBER; i++)
 			{
 				if (playerqq[i] == 0)
 					set = i;
@@ -842,14 +1082,14 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 			if (joined)
 			{
 				char buf[50];
-				sprintf(buf, "%sÒÑ¾­¼ÓÈëÁËÀÇÈË£¬²»ÄÜÖØ¸´¼ÓÈë", playername[i]);
+				sprintf(buf, "%sÒÑ¾­¼ÓÈëÁËÒ»Ò¹ÀÇÈË£¬²»ÄÜÖØ¸´¼ÓÈë", playername[i]);
 				sendmessage(ac, fromGroup, buf);
 			}
 			else
 			{
 
 				unsigned char* member = (unsigned char *)CQ_getGroupMemberInfoV2(ac, fromGroup, fromQQ, 1);
-				
+
 
 				char *nickname;
 
@@ -862,51 +1102,46 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 				playernum++;
 				char buf[300];
 				sprintf(buf, "%s¼ÓÈë³É¹¦\nµ±Ç°ÈËÊıÎª%dÈË:\n", nickname, playernum);
-				for (int i = 0; i < 15; i++)
+				for (int i = 1; i <= playernum; i++)
 				if (playerqq[i] != 0)
 				{
 					char buff[15];
-					sprintf(buff, "%dºÅÍæ¼Ò£º", i + 1);
+					sprintf(buff, "%dºÅÍæ¼Ò£º", i);
 					strcat(buf, buff);
 					strcat(buf, playername[i]);
 					strcat(buf, "\n");
 				}
 				sendmessage(ac, fromGroup, buf);
 			}
-			
-			
+
+
 		}
 		else
-			sendmessage(ac, fromGroup, "Ã»ÓĞÕıÔÚ½øĞĞµÄÀÇÈËÓÎÏ·£¬ÇëÊäÈëÖ¸Áî¡°¿ªÊ¼ÀÇÈË¡±£¬À´¿ªÆôÒ»³¡ÀÇÈËÓÎÏ·");
+			sendmessage(ac, fromGroup, "Ã»ÓĞÕıÔÚ½øĞĞµÄÒ»Ò¹ÀÇÈËÓÎÏ·£¬ÇëÊäÈëÖ¸Áî¡°¿ªÊ¼Ò»Ò¹ÀÇÈË¡±£¬À´¿ªÆôÒ»³¡Ò»Ò¹ÀÇÈËÓÎÏ·");
 	}
 
-	else if (strcmp(msg, "#¿ªÆôÀÇÈËÓÎÏ·") == 0)
+	else if (strcmp(msg, "#¿ªÆôÒ»Ò¹ÀÇÈËÓÎÏ·") == 0)
 	{
 		if (start == 1)
-			if(playernum >= 8 && playernum <= 15)
+			if (playernum >= 3 && playernum <= PLAY_NUMBER)
 			{
 				initgame(playernum, fromGroup);
 				start = 2;
 				deal_character(playernum);
 				print_player(fromGroup, playernum);
-				start = 3;	//½øÈëÀÇÈËÉ±ÈË½×¶Î
-				wolftimetoselect();
+				start = 3;	//½øÈë½ÇÉ«È·ÈÏ½×¶Î
+				character_move_stage(fromGroup);
+				
 			}
 			else
 				sendmessage(ac, fromGroup, "ÈËÊı²»×ã£¬ÎŞ·¨¿ªÆôÓÎÏ·");
 		else
 			sendmessage(ac, fromGroup, "ÎŞ·¨¿ªÆô£¬ÓÎÏ·²»ÔÚÕıÈ·×´Ì¬");
-		
+
 	}
 
 
-	else if (start == 6 && strcmp(msg, "#ÌìÁÁÁË") == 0)
-	{
-		sunrise(fromGroup);
-	}
-
-
-	if (strcmp(msg, "#²é¿´×´Ì¬") == 0)
+	if (strcmp(msg, "#²é¿´Ò»Ò¹×´Ì¬") == 0)
 	{
 		char m[3];
 		itoa(start, m, 10);
@@ -914,19 +1149,19 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 	}
 
 
-	if (strcmp(msg, "#²é¿´Íæ¼Ò") == 0)
+	if (strcmp(msg, "#²é¿´Ò»Ò¹Íæ¼Ò") == 0)
 	{
 		char buf[300] = "ÏÖÔÚµÄÍæ¼ÒÎª£º\n";
-		for (int i = 0; i < 15; i++)
+		for (int i = 1; i <= playernum; i++)
 		if (playerqq[i] != 0)
 		{
 			char buff[15];
-			sprintf(buff, "%dºÅÍæ¼Ò£º", i + 1);
+			sprintf(buff, "%dºÅÍæ¼Ò£º", i);
 			strcat(buf, buff);
 			strcat(buf, playername[i]);
 			strcat(buf, "\n");
 		}
-		
+
 
 		sendmessage(ac, fromGroup, buf);
 	}
@@ -941,156 +1176,7 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 */
 CQEVENT(int32_t, __eventDiscussMsg, 32)(int32_t subType, int32_t sendTime, int64_t fromDiscuss, int64_t fromQQ, const char *msg, int32_t font) {
 
-	if (strcmp(msg, "#¿ªÊ¼ÀÇÈË") == 0)
-	{
-		if (fromQQ == 452434701)
-		{
-			if (start == 0)
-			{
-				start_playerqq = fromQQ;
-				isGroup = 0;
-				uniqueQQgroup = fromDiscuss;
-				wolf_startgame(fromDiscuss, fromQQ);
-				start = 1;
-			}
-			else
-				sendmessage(ac, fromDiscuss, "ÀÇÈËÓÎÏ·ÒÑ¾­¿ªÊ¼£¡");
-
-		}
-		else
-			sendmessage(ac, fromDiscuss, "Äã²»ÊÇÎÒ°Ö°Ö£¬²»¸øÄã¿ªÀÇÈËÓÎÏ·");
-
-	}
-
-
-	else if (strcmp(msg, "#½áÊøÀÇÈË") == 0)
-	{
-		if (start != 0)
-		{
-			if (start_playerqq == fromQQ)
-			{
-				sendmessage(ac, fromDiscuss, "½áÊøÀÇÈËÓÎÏ·£¡");
-				start = 0;
-			}
-			else
-				sendmessage(ac, fromDiscuss, "Äã²»ÊÇÀÇÈËÓÎÏ·µÄ·¢ÆğÕß£¬²»ÄÜ½áÊøÀÇÈËÓÎÏ·£¡");
-		}
-		else
-			sendmessage(ac, fromDiscuss, "²¢Ã»ÓĞ¿ªÊ¼ÀÇÈËÓÎÏ·£¡");
-	}
-
-
-
-	else if (strcmp(msg, "#¼ÓÈëÀÇÈË") == 0)
-	{
-		if (start == 1)
-		{
-			int joined = 0;
-			int set = 0;
-			int i;
-			for (i = 0; i < 15; i++)
-			{
-				if (playerqq[i] == 0)
-					set = i;
-				if (playerqq[i] == fromQQ)	//¼ì²âÖØ¸´¼ÓÈëµÄº¯Êı£¬Ç°ÆÚ¿ª·¢ÏÈÈ¥µô
-				{
-					joined = 1;
-					break;
-				}
-				if (playerqq[i] == 0)
-					break;
-			}
-			if (joined)
-			{
-				char buf[50];
-				sprintf(buf, "%sÒÑ¾­¼ÓÈëÁËÀÇÈË£¬²»ÄÜÖØ¸´¼ÓÈë", playername[i]);
-				sendmessage(ac, fromDiscuss, buf);
-			}
-			else
-			{
-				
-				unsigned char* member = (unsigned char *)CQ_getStrangerInfo(ac, fromQQ, 1);
-
-
-				char *nickname;
-
-				nickname = (char *)malloc(sizeof(char)* 50);
-
-				analysis_nickname(member, &nickname, 0);
-
-				strcpy(playername[set], nickname);
-				playerqq[set] = fromQQ;
-				playernum++;
-				char buf[300];
-				sprintf(buf, "%s¼ÓÈë³É¹¦\nµ±Ç°ÈËÊıÎª%dÈË:\n", nickname, playernum);
-				for (int i = 0; i < 15; i++)
-				if (playerqq[i] != 0)
-				{
-					char buff[15];
-					sprintf(buff, "%dºÅÍæ¼Ò£º", i + 1);
-					strcat(buf, buff);
-					strcat(buf, playername[i]);
-					strcat(buf, "\n");
-				}
-				sendmessage(ac, fromDiscuss, buf);
-			}
-
-
-		}
-		else
-			sendmessage(ac, fromDiscuss, "Ã»ÓĞÕıÔÚ½øĞĞµÄÀÇÈËÓÎÏ·£¬ÇëÊäÈëÖ¸Áî¡°¿ªÊ¼ÀÇÈË¡±£¬À´¿ªÆôÒ»³¡ÀÇÈËÓÎÏ·");
-	}
-
-	else if (strcmp(msg, "#¿ªÆôÀÇÈËÓÎÏ·") == 0)
-	{
-		if (start == 1)
-		if (playernum >= 8 && playernum <= 15)
-		{
-			initgame(playernum, fromDiscuss);
-			start = 2;
-			deal_character(playernum);
-			print_player(fromDiscuss, playernum);
-			start = 3;	//½øÈëÀÇÈËÉ±ÈË½×¶Î
-			wolftimetoselect();
-		}
-		else
-			sendmessage(ac, fromDiscuss, "ÈËÊı²»×ã£¬ÎŞ·¨¿ªÆôÓÎÏ·");
-		else
-			sendmessage(ac, fromDiscuss, "ÎŞ·¨¿ªÆô£¬ÓÎÏ·²»ÔÚÕıÈ·×´Ì¬");
-
-	}
-
-
-	else if (start == 6 && strcmp(msg, "#ÌìÁÁÁË") == 0)
-	{
-		sunrise(fromDiscuss);
-	}
-
-
-	if (strcmp(msg, "#²é¿´×´Ì¬") == 0)
-	{
-		char m[3];
-		itoa(start, m, 10);
-		sendmessage(ac, fromDiscuss, m);
-	}
-
-
-	if (strcmp(msg, "#²é¿´Íæ¼Ò") == 0)
-	{
-		char buf[300] = "ÏÖÔÚµÄÍæ¼ÒÎª£º\n";
-		for (int i = 0; i < 15; i++)
-		if (playerqq[i] != 0)
-		{
-			char buff[15];
-			sprintf(buff, "%dºÅÍæ¼Ò£º", i+1);
-			strcat(buf, buff);
-			strcat(buf, playername[i]);
-			strcat(buf, "\n");
-		}
-
-
-		sendmessage(ac, fromDiscuss, buf);
-	}
+	
 	return EVENT_BLOCK; //¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û¡°_eventPrivateMsg¡±º¯Êı
 }
 

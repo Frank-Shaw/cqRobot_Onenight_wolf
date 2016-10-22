@@ -14,7 +14,7 @@
     <ProjectGuid>{9D36EAFF-6BF0-4BDE-A20C-5BCB92DE79D6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CQPSDK</RootNamespace>
-    <ProjectName>com.coxxs.wolf</ProjectName>
+    <ProjectName>com.coxxs.onenight.wolf</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
