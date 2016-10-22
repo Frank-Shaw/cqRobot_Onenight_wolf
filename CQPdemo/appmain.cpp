@@ -371,6 +371,7 @@ int initgame(int number, int64_t fromGroup)
 
 void deal_character(int num)
 {
+	srand((unsigned int)time(NULL));
 	//这里使用反向赋值，也就首先根据角色数量，生成一个带有角色数量和信息的序列，再将人的序列按顺序放置在序列当中
 	int pre_character[PLAY_NUMBER + 1] = { 0 };
 	int i;
@@ -422,6 +423,9 @@ void deal_character(int num)
 				count--;
 		}
 		player[i] = pre_character[pos];
+		
+
+
 		pre_character[pos] = 0;
 	}
 
@@ -453,7 +457,7 @@ void print_player(int64_t fromGroup, int num)
 		Sleep(1000);
 	}
 
-	sendmessage(ac, fromGroup, "角色分配完毕，游戏开始。\n祝玩的愉快！");
+	sendmessage(ac, fromGroup, "角色分配完毕，游戏开始。\n祝玩的愉快！\n现在请等待夜间角色行动...\n");
 
 }
 
@@ -463,11 +467,8 @@ void print_player(int64_t fromGroup, int num)
 
 void wolf_startgame(int64_t fromGroup, int64_t fromQQ)
 {
-
-	srand((unsigned int)time(NULL));
 	init();
 	welcome_word(fromGroup);
-
 }
 
 void wolf_time(int64_t fromGroup)
@@ -492,7 +493,7 @@ void wolf_time(int64_t fromGroup)
 		int b = rand() % 3 + 1;
 		char t[100];
 		sprintf(t, "这局游戏，你是狼人，这局游戏只有你一位狼人，要小心的隐藏好自己\n三张底牌其中一张为：%s", inf[bottom[b]]);
-		CQ_sendPrivateMsg(ac, playerqq[0],t);
+		CQ_sendPrivateMsg(ac, wolf_player[0], t);
 
 	}
 	else if (wolf_count == 2)
@@ -607,7 +608,7 @@ void seer_time(int64_t fromGroup)
 		if (player[i] == 4)	//如果是预言家
 		{
 			have_seer = true;
-			char boddy[200] = "你是预言家，你可以发动两个技能之一，1、查看一个玩家的身份，2、查看三张底牌当中的任意两张，请回复序号表示查看一个玩家身份，回复0表示查看底牌。\n";
+			char boddy[200] = "你是预言家，你可以发动两个技能之一：回复一个序号表示查看一个玩家身份；或者回复0查看三张底牌当中的任意两张。\n";
 			start = 4;
 			CQ_sendPrivateMsg(ac, playerqq[i], boddy);
 		}
@@ -706,6 +707,7 @@ void character_move_stage(int64_t fromGroup)
 void sunrise()
 {
 	sendmessage(ac, uniqueQQgroup, "好啦，昨晚上所有身份都已经行动完毕，现在开始进入无限制讨论，如果想投票，请私聊回复序号即可，记住，一旦投票不可更改。");
+	start = 7;
 }
 
 
@@ -713,7 +715,7 @@ void sunrise()
 void show_all()
 {
 	char mm[1000] = "本局游戏结束~所有人身份如下：\n";
-	for (int i = 1; i < playernum; i++)
+	for (int i = 1; i <= playernum; i++)
 	{
 		char buf[50];
 		sprintf(buf, "%d号玩家身份是%s\n", i, inf[player[i]]);
@@ -901,7 +903,7 @@ CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t sendTime, int64
 		}
 	}
 
-	if (start == 5)	//强盗行动回合
+	else if (start == 5)	//强盗行动回合
 	{
 		for (int i = 1; i <= playernum; i++)
 		{
@@ -937,7 +939,7 @@ CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t sendTime, int64
 	}
 	
 
-	if (start == 6)	//捣蛋鬼行动回合
+	else if (start == 6)	//捣蛋鬼行动回合
 	{
 		for (int i = 1; i <= playernum; i++)
 		{
@@ -962,18 +964,17 @@ CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t sendTime, int64
 				start = 7;
 
 				char tt[200];
-				sprintf(tt, "你选择了%d号玩家%s和%d号玩家%s交换", x, playername[x], y, inf[player[y]]);
+				sprintf(tt, "你选择了%d号玩家%s和%d号玩家%s交换", x, playername[x], y, playername[y]);
 				CQ_sendPrivateMsg(ac, fromQQ, tt);
 
 				insomniac_time();
 
-				sunrise();
 				
 			}
 		}
 	}
 
-	if (start == 7)	//接受各位玩家的投票
+	else if (start == 7)	//接受各位玩家的投票
 	{
 		for (int i = 1; i <= playernum; i++)
 		{
@@ -991,7 +992,7 @@ CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t sendTime, int64
 
 					vote_player++;
 					memset(b, '\0', 200);
-					sprintf(b, "%s号玩家%s已经投票！还剩%d位玩家没有投票", i, playername[i], playernum - vote_player);
+					sprintf(b, "%d号玩家%s已经投票！还剩%d位玩家没有投票", i, playername[i], (playernum - vote_player));
 
 					sendmessage(ac, uniqueQQgroup, b);
 
