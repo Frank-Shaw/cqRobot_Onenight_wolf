@@ -23,7 +23,7 @@ bool enabled = false;
 * 一夜狼人游戏的相关变量参数
 */
 
-//start 表示一夜狼人环节的状态机，0表示没有游戏，1表示刚开始，等待其他人报名参加，2表示所有人员就位，开始游戏。3表示开始分配身份（也是待命阶段），4表示等待预言家行动，5表示强盗行动，6表示捣蛋鬼行动，7表示都行动完毕，等待投票，8表示公布结果
+//start 表示一夜狼人环节的状态机，0表示没有游戏，1表示刚开始，等待其他人报名参加，2表示所有人员就位，开始游戏。3表示开始分配身份（也是待命阶段），4表示等待预言家行动，5表示强盗行动，6表示捣蛋鬼行动，7表示都行动完毕，等待投票，8表示等待猎人行动，9表示公布结果
 int start = 0;
 int playernum = 0; //报名参加一夜狼人的玩家数量
 
@@ -475,7 +475,7 @@ void wolf_time(int64_t fromGroup)
 {
 	//检索狼人数
 	int wolf_count = 0;	//既作为狼人数统计，也作为狼人位置的下标
-	int wolf_player[2];
+	int64_t wolf_player[2];
 	for (int i = 1; i <= playernum; i++)
 	{
 		if (player[i] == 1)	//如果是狼人
@@ -542,7 +542,7 @@ void lackeys_time(int64_t fromGroup)
 	{
 		//检索狼人数
 		int wolf_count = 0;	//既作为狼人数统计，也作为狼人位置的下标
-		int wolf_player[2];
+		int64_t wolf_player[2];
 
 		char boddy[200] = "你是爪牙，你需要保护的狼是（如果没有，表示场上没有狼）：\n";
 
@@ -569,7 +569,7 @@ void watchman_time(int64_t fromGroup)
 {
 	//检索守夜人数
 	int watchman_count = 0;	//既作为守夜人数统计，也作为守夜人位置的下标
-	int watchman_player[2] = { 0, 0 };
+	int64_t watchman_player[2] = { 0, 0 };
 
 	char boddy[120] = "你是守夜人，你的守夜人同伴是：\n";
 
@@ -769,6 +769,9 @@ void all_end()
 	}
 	else
 	{
+
+		int have_hunter = false;
+
 		char dead_player[500] = "昨晚票数最高的几名玩家是：\n";
 		char dead_player_inf[100] = "他们的身份是：\n";
 		for (int i = 1; i < playernum; i++)
@@ -782,6 +785,9 @@ void all_end()
 				memset(buf, '\0', 30);
 				sprintf(buf, "%d号玩家%s\n", i, inf[player[i]]);
 				strcat(dead_player_inf, buf);
+				strcat(dead_player_inf, "请等待5秒，检查死亡者当中是否有猎人，如果没有，5秒后公布所有人身份。");
+				if (player[i] == 9)	//表示死亡玩家有猎人
+					have_hunter = true;
 
 			}
 			
@@ -790,11 +796,20 @@ void all_end()
 		strcat(dead_player, dead_player_inf);
 		sendmessage(ac, uniqueQQgroup, dead_player);
 		
+		Sleep(5000);
+
+		if (have_hunter)
+		{
+			sendmessage(ac, uniqueQQgroup, "死亡者当中有猎人，请猎人私聊我你想要带走的人，若不带走，请回复0，其他人请等待...");
+			start = 8;
+		}
+		else
+			show_all();
 
 	}
 
 
-	show_all();
+	
 	
 }
 
@@ -956,19 +971,27 @@ CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t sendTime, int64
 				int x = atoi(a);
 				int y = atoi(b);
 
-				//交换捣蛋鬼选择的人
-				int temp = player[x];
-				player[x] = player[y];
-				player[y] = temp;
 
-				start = 7;
+				if (x == i || y == i)
+				{
+					CQ_sendPrivateMsg(ac, fromQQ, "捣蛋鬼不能选择自己进行交换，请重新输入！");
+				}
+				else
+				{
 
-				char tt[200];
-				sprintf(tt, "你选择了%d号玩家%s和%d号玩家%s交换", x, playername[x], y, playername[y]);
-				CQ_sendPrivateMsg(ac, fromQQ, tt);
+					//交换捣蛋鬼选择的人
+					int temp = player[x];
+					player[x] = player[y];
+					player[y] = temp;
 
-				insomniac_time();
+					start = 7;
 
+					char tt[200];
+					sprintf(tt, "你选择了%d号玩家%s和%d号玩家%s交换", x, playername[x], y, playername[y]);
+					CQ_sendPrivateMsg(ac, fromQQ, tt);
+
+					insomniac_time();
+				}
 				
 			}
 		}
@@ -998,7 +1021,7 @@ CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t sendTime, int64
 
 					if (vote_player == playernum)
 					{
-						start = 8;
+						start = 9;
 						all_end();
 					}
 
@@ -1007,6 +1030,26 @@ CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t sendTime, int64
 				{
 					CQ_sendPrivateMsg(ac, fromQQ, "你已经投过票了！");
 				}
+			}
+		}
+	}
+	else if (start == 8)	//猎人死后行动
+	{
+		for (int i = 1; i <= playernum; i++)
+		{
+			if (player[i] == 9)	//这个人是猎人
+			{
+				int ansofhunter = atoi(msg);
+				if (ansofhunter == 0)
+					sendmessage(ac, uniqueQQgroup, "猎人选择了不带人！");
+				else if (ansofhunter > 0 && ansofhunter <= playernum)
+				{
+					char buf[100];
+					sprintf(buf, "猎人选择了带走%d号玩家%s，他的身份是%s！", ansofhunter, playername[ansofhunter], inf[player[ansofhunter]]);
+					sendmessage(ac, uniqueQQgroup, buf);
+				}
+				start = 9;
+				show_all();
 			}
 		}
 	}

@@ -1,14 +1,11 @@
-﻿生成启动时间为 2016/10/22 20:57:16。
+﻿生成启动时间为 2016/10/22 21:23:47。
      1>项目“D:\我的文档\文档\GitHub\cqRobot_Onenight_wolf\CQPdemo\CQPDemo.vcxproj”在节点 2 上(Build 个目标)。
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(381,5): warning MSB8028: The intermediate directory (Release\) contains files shared from another project (com.coxxs.onenight_wolf.vcxproj, com.coxxs.wolf.vcxproj, com.example.democ.vcxproj).  This can lead to incorrect clean and rebuild behavior.
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D CQPSDK_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Release\com.coxxs.onenight.wolf.pch" /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt appmain.cpp
          appmain.cpp
      1>appmain.cpp(110): warning C4018: “<”: 有符号/无符号不匹配
-     1>appmain.cpp(483): warning C4244: “=”: 从“int64_t”转换到“int”，可能丢失数据
-     1>appmain.cpp(553): warning C4244: “=”: 从“int64_t”转换到“int”，可能丢失数据
-     1>appmain.cpp(580): warning C4244: “=”: 从“int64_t”转换到“int”，可能丢失数据
-     1>appmain.cpp(1148): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _itoa. See online help for details.
+     1>appmain.cpp(1191): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _itoa. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdlib.h(937) : 参见“itoa”的声明
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\我的文档\文档\GitHub\cqRobot_Onenight_wolf\Release\com.coxxs.onenight.wolf.dll" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\我的文档\文档\GitHub\cqRobot_Onenight_wolf\Release\com.coxxs.onenight.wolf.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\我的文档\文档\GitHub\cqRobot_Onenight_wolf\Release\com.coxxs.onenight.wolf.lib" /MACHINE:X86 /SAFESEH /DLL Release\appmain.obj
@@ -23,4 +20,4 @@
 
 生成成功。
 
-已用时间 00:00:00.47
+已用时间 00:00:00.46
