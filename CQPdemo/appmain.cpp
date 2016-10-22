@@ -1220,6 +1220,154 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 */
 CQEVENT(int32_t, __eventDiscussMsg, 32)(int32_t subType, int32_t sendTime, int64_t fromDiscuss, int64_t fromQQ, const char *msg, int32_t font) {
 
+
+
+	if (strcmp(msg, "#开始一夜狼人") == 0)
+	{
+		if (fromQQ == 452434701)
+		{
+			if (start == 0)
+			{
+				start_playerqq = fromQQ;
+				isGroup = 0;
+				uniqueQQgroup = fromDiscuss;
+				wolf_startgame(fromDiscuss, fromQQ);
+				start = 1;
+			}
+			else
+				sendmessage(ac, fromDiscuss, "一夜狼人游戏已经开始！");
+
+		}
+		else
+			sendmessage(ac, fromDiscuss, "你不是我爸爸，不给你开一夜狼人游戏");
+
+	}
+
+
+	else if (strcmp(msg, "#结束一夜狼人") == 0)
+	{
+		if (start != 0)
+		{
+			if (start_playerqq == fromQQ)
+			{
+				sendmessage(ac, fromDiscuss, "结束一夜狼人游戏！");
+				start = 0;
+			}
+			else
+				sendmessage(ac, fromDiscuss, "你不是一夜狼人游戏的发起者，不能结束一夜狼人游戏！");
+		}
+		else
+			sendmessage(ac, fromDiscuss, "并没有开始一夜狼人游戏！");
+	}
+
+
+
+	else if (strcmp(msg, "#加入一夜狼人") == 0)
+	{
+		if (start == 1)
+		{
+			int joined = 0;
+			int set = 1;
+			int i;
+			for (i = 1; i <= PLAY_NUMBER; i++)
+			{
+				if (playerqq[i] == 0)
+					set = i;
+				if (playerqq[i] == fromQQ)	//检测重复加入的函数，前期开发先去掉
+				{
+					joined = 1;
+					break;
+				}
+				if (playerqq[i] == 0)
+					break;
+			}
+			if (joined)
+			{
+				char buf[50];
+				sprintf(buf, "%s已经加入了一夜狼人，不能重复加入", playername[i]);
+				sendmessage(ac, fromDiscuss, buf);
+			}
+			else
+			{
+
+				unsigned char* member = (unsigned char *)CQ_getGroupMemberInfoV2(ac, fromDiscuss, fromQQ, 1);
+
+
+				char *nickname;
+
+				nickname = (char *)malloc(sizeof(char)* 50);
+
+				analysis_nickname(member, &nickname, 1);
+
+				strcpy(playername[set], nickname);
+				playerqq[set] = fromQQ;
+				playernum++;
+				char buf[300];
+				sprintf(buf, "%s加入成功\n当前人数为%d人:\n", nickname, playernum);
+				for (int i = 1; i <= playernum; i++)
+				if (playerqq[i] != 0)
+				{
+					char buff[15];
+					sprintf(buff, "%d号玩家：", i);
+					strcat(buf, buff);
+					strcat(buf, playername[i]);
+					strcat(buf, "\n");
+				}
+				sendmessage(ac, fromDiscuss, buf);
+			}
+
+
+		}
+		else
+			sendmessage(ac, fromDiscuss, "没有正在进行的一夜狼人游戏，请输入指令“开始一夜狼人”，来开启一场一夜狼人游戏");
+	}
+
+	else if (strcmp(msg, "#开启一夜狼人游戏") == 0)
+	{
+		if (start == 1)
+		if (playernum >= 3 && playernum <= PLAY_NUMBER)
+		{
+			initgame(playernum, fromDiscuss);
+			start = 2;
+			deal_character(playernum);
+			print_player(fromDiscuss, playernum);
+			start = 3;	//进入角色确认阶段
+			character_move_stage(fromDiscuss);
+
+		}
+		else
+			sendmessage(ac, fromDiscuss, "人数不足，无法开启游戏");
+		else
+			sendmessage(ac, fromDiscuss, "无法开启，游戏不在正确状态");
+
+	}
+
+
+	if (strcmp(msg, "#查看一夜状态") == 0)
+	{
+		char m[3];
+		itoa(start, m, 10);
+		sendmessage(ac, fromDiscuss, m);
+	}
+
+
+	if (strcmp(msg, "#查看一夜玩家") == 0)
+	{
+		char buf[300] = "现在的玩家为：\n";
+		for (int i = 1; i <= playernum; i++)
+		if (playerqq[i] != 0)
+		{
+			char buff[15];
+			sprintf(buff, "%d号玩家：", i);
+			strcat(buf, buff);
+			strcat(buf, playername[i]);
+			strcat(buf, "\n");
+		}
+
+
+		sendmessage(ac, fromDiscuss, buf);
+	}
+
 	
 	return EVENT_BLOCK; //关于返回值说明, 见“_eventPrivateMsg”函数
 }
