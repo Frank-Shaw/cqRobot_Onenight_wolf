@@ -1066,8 +1066,8 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 
 	if (strcmp(msg, "#开始一夜狼人") == 0)
 	{
-		if (fromQQ == 452434701)
-		{
+		//if (fromQQ == 452434701)	//设置创建者权限
+		//{
 			if (start == 0)
 			{
 				start_playerqq = fromQQ;
@@ -1079,9 +1079,9 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 			else
 				sendmessage(ac, fromGroup, "一夜狼人游戏已经开始！");
 
-		}
-		else
-			sendmessage(ac, fromGroup, "你不是我爸爸，不给你开一夜狼人游戏");
+		//}
+		//else
+			//sendmessage(ac, fromGroup, "你不是我爸爸，不给你开一夜狼人游戏");
 
 	}
 
@@ -1224,8 +1224,8 @@ CQEVENT(int32_t, __eventDiscussMsg, 32)(int32_t subType, int32_t sendTime, int64
 
 	if (strcmp(msg, "#开始一夜狼人") == 0)
 	{
-		if (fromQQ == 452434701)
-		{
+		//if (fromQQ == 452434701)	设置创建者权限
+		//{
 			if (start == 0)
 			{
 				start_playerqq = fromQQ;
@@ -1237,9 +1237,9 @@ CQEVENT(int32_t, __eventDiscussMsg, 32)(int32_t subType, int32_t sendTime, int64
 			else
 				sendmessage(ac, fromDiscuss, "一夜狼人游戏已经开始！");
 
-		}
-		else
-			sendmessage(ac, fromDiscuss, "你不是我爸爸，不给你开一夜狼人游戏");
+		//}
+		//else
+			//sendmessage(ac, fromDiscuss, "你不是我爸爸，不给你开一夜狼人游戏");
 
 	}
 
@@ -1290,14 +1290,14 @@ CQEVENT(int32_t, __eventDiscussMsg, 32)(int32_t subType, int32_t sendTime, int64
 			else
 			{
 
-				unsigned char* member = (unsigned char *)CQ_getGroupMemberInfoV2(ac, fromDiscuss, fromQQ, 1);
+				unsigned char* member = (unsigned char *)CQ_getStrangerInfo(ac, fromQQ, 1);
 
 
 				char *nickname;
 
 				nickname = (char *)malloc(sizeof(char)* 50);
 
-				analysis_nickname(member, &nickname, 1);
+				analysis_nickname(member, &nickname, 0);
 
 				strcpy(playername[set], nickname);
 				playerqq[set] = fromQQ;
