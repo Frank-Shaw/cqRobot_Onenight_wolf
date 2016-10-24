@@ -1167,6 +1167,8 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 	else if (strcmp(msg, "#开启一夜狼人游戏") == 0)
 	{
 		if (start == 1)
+		if (start_playerqq == fromQQ)
+		{
 			if (playernum >= 3 && playernum <= PLAY_NUMBER)
 			{
 				initgame(playernum, fromGroup);
@@ -1175,10 +1177,13 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 				print_player(fromGroup, playernum);
 				start = 3;	//进入角色确认阶段
 				character_move_stage(fromGroup);
-				
+
 			}
 			else
 				sendmessage(ac, fromGroup, "人数不足，无法开启游戏");
+		}
+		else
+			sendmessage(ac, fromGroup, "你不是发起者，无法开启游戏");
 		else
 			sendmessage(ac, fromGroup, "无法开启，游戏不在正确状态");
 
@@ -1325,18 +1330,22 @@ CQEVENT(int32_t, __eventDiscussMsg, 32)(int32_t subType, int32_t sendTime, int64
 	else if (strcmp(msg, "#开启一夜狼人游戏") == 0)
 	{
 		if (start == 1)
-		if (playernum >= 3 && playernum <= PLAY_NUMBER)
-		{
-			initgame(playernum, fromDiscuss);
-			start = 2;
-			deal_character(playernum);
-			print_player(fromDiscuss, playernum);
-			start = 3;	//进入角色确认阶段
-			character_move_stage(fromDiscuss);
+		if (start_playerqq == fromQQ)
+		
+			if (playernum >= 3 && playernum <= PLAY_NUMBER)
+			{
+				initgame(playernum, fromDiscuss);
+				start = 2;
+				deal_character(playernum);
+				print_player(fromDiscuss, playernum);
+				start = 3;	//进入角色确认阶段
+				character_move_stage(fromDiscuss);
 
-		}
+			}
+			else
+				sendmessage(ac, fromDiscuss, "人数不足，无法开启游戏");
 		else
-			sendmessage(ac, fromDiscuss, "人数不足，无法开启游戏");
+			sendmessage(ac, fromDiscuss, "你不是发起者，不能开启游戏");
 		else
 			sendmessage(ac, fromDiscuss, "无法开启，游戏不在正确状态");
 
